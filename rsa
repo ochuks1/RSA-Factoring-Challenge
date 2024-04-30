@@ -1,0 +1,13 @@
+#!/bin/bash
+
+number=$(cat "$1")
+factors=$(factor "$number" | sed 's/[^0-9]*//g')
+
+for factor in $factors; do
+    if [ "$(factor "$factor" | wc -w)" -eq 1 ]; then
+        prime1=$factor
+        prime2=$((number / factor))
+        echo "$number=$prime1*$prime2"
+        exit
+    fi
+done
