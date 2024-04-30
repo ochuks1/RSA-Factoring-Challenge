@@ -1,6 +1,11 @@
 #!/bin/bash
 
 while read -r number; do
-    factors=$(factor "$number" | sed 's/[^0-9]*//g' | tr ' ' '*')
+    factors=$(factor "$number" | sed 's/[^0-9]*//g')
+    if [ "$factors" = "$number" ]; then
+        factors="1*$number"
+    else
+        factors=$(echo "$factors" | tr ' ' '*')
+    fi
     echo "$number=$factors"
 done < "$1"
