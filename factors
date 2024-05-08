@@ -1,8 +1,10 @@
 #!/bin/bash
 
 while read -r number; do
-    factors=$(factor "$number" | sed 's/[^0-9 ]//g')
-    factor1=$(echo "$factors" | awk '{print $1}')
-    factor2=$(echo "$factors" | awk '{print $2}')
-    echo "$number=$factor1*$factor2"
+    for ((i=2; i<=number/2; i++)); do
+        if ((number % i == 0)); then
+            echo "$number=$i*$(($number / i))"
+            break
+        fi
+    done
 done < "$1"
