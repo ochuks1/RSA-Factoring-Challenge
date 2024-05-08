@@ -1,0 +1,42 @@
+#!/usr/bin/python3
+from sys import argv
+
+def is_prime(n):
+    """Check if a number is prime."""
+    if n <= 1:
+        return False
+    if n <= 3:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i += 6
+    return True
+
+def factorize(num):
+    """Factorize a number into the product of two smaller numbers."""
+    if num % 2 == 0:
+        return (num // 2, 2)
+    for i in range(3, num, 2):
+        if num % i == 0:
+            factor = num // i
+            if is_prime(factor) and is_prime(i):
+                return (factor, i)
+
+if __name__ == "__main__":
+    if len(argv) != 2:
+        print("Usage: {} <file>".format(argv[0]))
+        exit(1)
+    
+    with open(argv[1]) as f:
+        for line in f:
+            num = int(line)
+            print("{:d}=".format(num), end="")
+            factors = factorize(num)
+            if factors:
+                print("{}*{}".format(factors[0], factors[1]))
+            else:
+                print("Cannot factorize further")

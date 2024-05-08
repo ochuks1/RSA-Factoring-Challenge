@@ -1,30 +1,36 @@
 #!/usr/bin/python3
 from sys import argv
+import random
 
-def is_prime(n):
-    """Check if a number is prime."""
-    if n <= 1:
-        return False
-    if n <= 3:
-        return True
-    if n % 2 == 0 or n % 3 == 0:
-        return False
-    i = 5
-    while i * i <= n:
-        if n % i == 0 or n % (i + 2) == 0:
-            return False
-        i += 6
-    return True
+def gcd(a, b):
+    """Compute the greatest common divisor of two numbers."""
+    while b:
+        a, b = b, a % b
+    return a
+
+def pollard_rho(n):
+    """Use Pollard's rho algorithm to find a non-trivial factor of n."""
+    if n % 2 == 0:
+        return 2
+    x = random.randint(1, n-1)
+    y = x
+    c = random.randint(1, n-1)
+    d = 1
+    while d == 1:
+        x = (x*x + c) % n
+        y = (y*y + c) % n
+        y = (y*y + c) % n
+        d = gcd(abs(x - y), n)
+    return d
 
 def factorize(num):
     """Factorize a number into the product of two smaller numbers."""
-    if num % 2 == 0:
-        return (num // 2, 2)
-    for i in range(3, num, 2):
-        if num % i == 0:
-            factor = num // i
-            if is_prime(factor) and is_prime(i):
-                return (factor, i)
+    factors = []
+    while num > 1:
+        factor = pollard_rho(num)
+        factors.append(factor)
+        num //= factor
+    return factors
 
 if __name__ == "__main__":
     if len(argv) != 2:
@@ -36,7 +42,7 @@ if __name__ == "__main__":
             num = int(line)
             print("{:d}=".format(num), end="")
             factors = factorize(num)
-            if factors:
+            if len(factors) == 2:
                 print("{}*{}".format(factors[0], factors[1]))
             else:
                 print("Cannot factorize further")
