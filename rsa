@@ -1,13 +1,39 @@
-#!/bin/bash
+#!/usr/bin/python3
+from sys import argv
 
-number=$(cat "$1")
-factors=$(factor "$number" | sed 's/[^0-9]*//g')
+def is_prime(n):
+    """Check if a number is prime."""
+    if n <= 1:
+        return False
+    if n <= 3:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i += 6
+    return True
 
-for factor in $factors; do
-    if [ "$(factor "$factor" | wc -w)" -eq 1 ]; then
-        prime1=$factor
-        prime2=$((number / factor))
-        echo "$number=$prime1*$prime2"
-        exit
-    fi
-done
+def factorize(num):
+    """Factorize a number into the product of two smaller numbers."""
+    for i in range(2, num // 2 + 1):
+        if num % i == 0:
+            if is_prime(i) and is_prime(num // i):
+                return (i, num // i)
+
+if __name__ == "__main__":
+    if len(argv) != 2:
+        print("Usage: {} <file>".format(argv[0]))
+        exit(1)
+    
+    with open(argv[1]) as f:
+        for line in f:
+            num = int(line)
+            print("{:d}=".format(num), end="")
+            factors = factorize(num)
+            if factors:
+                print("{}*{}".format(factors[0], factors[1]))
+            else:
+                print("Cannot factorize further")

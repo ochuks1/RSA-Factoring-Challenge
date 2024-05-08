@@ -2,9 +2,11 @@
 
 while read -r number; do
     for ((i=2; i<=number/2; i++)); do
-        if ((number % i == 0)); then
-            echo "$number=$i*$(($number / i))"
-            break
+       if ((number % i == 0)); then
+            factor2=$i
+            factor1=$((number / i))
+            echo "$number=$factor1*$factor2"
+           break
         fi
     done
 done < "$1"
