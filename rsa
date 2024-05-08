@@ -16,20 +16,27 @@ def is_prime(n):
         i += 6
     return True
 
-def factorize_rsa(num):
-    """Factorize an RSA number into the product of two prime numbers."""
-    for i in range(2, num // 2 + 1):
-        if num % i == 0 and is_prime(i) and is_prime(num // i):
-            return (i, num // i)
+def factorize(num):
+    """Factorize a number into the product of two smaller numbers."""
+    if num % 2 == 0:
+        return (num // 2, 2)
+    for i in range(3, num, 2):
+        if num % i == 0:
+            factor = num // i
+            if is_prime(factor) and is_prime(i):
+                return (factor, i)
 
 if __name__ == "__main__":
     if len(argv) != 2:
-        print("Usage: {} <number>".format(argv[0]))
+        print("Usage: {} <file>".format(argv[0]))
         exit(1)
     
-    num = int(argv[1])
-    factors = factorize_rsa(num)
-    if factors:
-        print("{}={}*{}".format(num, factors[0], factors[1]))
-    else:
-        print("Cannot factorize further")
+    with open(argv[1]) as f:
+        for line in f:
+            num = int(line)
+            print("{:d}=".format(num), end="")
+            factors = factorize(num)
+            if factors:
+                print("{}*{}".format(factors[0], factors[1]))
+            else:
+                print("Cannot factorize further")
